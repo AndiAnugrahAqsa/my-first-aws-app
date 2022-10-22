@@ -7,6 +7,7 @@ import (
 	"strconv"
 
 	"github.com/labstack/echo/v4"
+	"github.com/labstack/echo/v4/middleware"
 	"gorm.io/driver/mysql"
 	"gorm.io/gorm"
 )
@@ -68,8 +69,8 @@ func GetUsersController(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]any{
-		"messages": "success get all users",
-		"users":    users,
+		"message": "success get all users",
+		"users":   users,
 	})
 }
 
@@ -82,8 +83,8 @@ func GetUserController(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]any{
-		"messages": "success get user",
-		"user":     user,
+		"message": "success get user",
+		"user":    user,
 	})
 }
 
@@ -96,7 +97,7 @@ func DeleteUserController(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]any{
-		"messages": fmt.Sprintf("success delete user with id = %d", id),
+		"message": fmt.Sprintf("success delete user with id = %d", id),
 	})
 
 }
@@ -120,8 +121,8 @@ func UpdateUserController(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusOK, map[string]any{
-		"messages": "success update user",
-		"user":     user,
+		"message": "success update user",
+		"user":    user,
 	})
 }
 
@@ -134,13 +135,18 @@ func CreateUserController(c echo.Context) error {
 	}
 
 	return c.JSON(http.StatusCreated, map[string]any{
-		"messages": "success create user",
-		"user":     user,
+		"message": "success create user",
+		"user":    user,
 	})
 }
 
 func main() {
 	e := echo.New()
+
+	e.Use(middleware.LoggerWithConfig(middleware.LoggerConfig{
+		Format: "method=${method}, host=${host}, uri=${uri}, status=${status}\n",
+	}))
+
 	e.GET("/users", GetUsersController)
 	e.GET("/users/:id", GetUserController)
 	e.POST("/users", CreateUserController)
